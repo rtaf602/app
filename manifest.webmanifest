@@ -1,0 +1,15 @@
+{
+  "name": "ศูนย์รวมระบบงาน ฝูงบิน 602",
+  "short_name": "ฝูง 602",
+  "lang": "th",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "background_color": "#0a2140",
+  "theme_color": "#0f2a4a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

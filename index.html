@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>ศูนย์รวมระบบ ฝูง.602</title>
+<meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1524" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ฝูง 602">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* หน้ารวมระบบงาน ฝูงบิน 602: ทุกคนต้องเข้าสู่ระบบกลาง (eadmin) ก่อน แล้วจึงเห็นไอคอนของแต่ละระบบ
+   หัวหน้า: เวลาไทยและเวลา Zulu, แบนเนอร์, กลุ่มไอคอน, แถบหมวดอยู่ด้านล่างบนมือถือ */
+:root {
+  --bg: #f6f1e7;
+  --panel: #fdfbf6;
+  --fg: #0f2a4a;
+  --muted: #5d6672;
+  --line: #e5dbc7;
+  --gold: #bd9148;
+  --gold-text: #86622a;
+  --gold-hi: #eed6a3;
+  --tile-a: #1a4170;
+  --tile-b: #0d2443;
+  --tile-ink: #e6cc97;
+  --tile-edge: rgba(214, 180, 118, .45);
+  --navy-deep: #0a2140;
+  --navy: #0f2a4a;
+  --navy-lift: #123a66;
+  --white: #ffffff;
+  --dock: rgba(253, 251, 246, .9);
+  --sel-bg: #0f2a4a;
+  --sel-fg: #f3e2bd;
+  --shadow: rgba(15, 42, 74, .10);
+  --danger: #b3261e;
+  --font-display: "Cormorant Garamond", "Noto Serif Thai", Georgia, serif;
+  --font-body: "IBM Plex Sans Thai", "Noto Sans Thai", Tahoma, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1524; --panel: #111f34; --fg: #f1eadc; --muted: #a3adba; --line: #22334b;
+    --gold: #c9a35e; --gold-text: #e2c58e; --gold-hi: #f3e2bd;
+    --tile-a: #1f4778; --tile-b: #10284a; --tile-ink: #ecd4a2; --tile-edge: rgba(214, 180, 118, .4);
+    --dock: rgba(14, 27, 46, .9); --sel-bg: #e2c58e; --sel-fg: #0b1524; --shadow: rgba(0, 0, 0, .35); --danger: #ff8f85;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
+img { max-width: 100%; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.wrap {
+  max-width: 1000px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+:is(a, button, input):focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ระหว่างตรวจการเข้าสู่ระบบ */
+.gate { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding-block: 24px; }
+.gate-box { width: min(360px, 100%); display: grid; justify-items: center; gap: 14px; padding: 28px 22px; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 6px 18px var(--shadow); }
+.gate-box .crest { width: 72px; height: 72px; display: block; }
+.gate-box h1 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.3; }
+.gate-box p { margin: 0; color: var(--muted); }
+.gate-box .btn { min-width: 160px; }
+
+/* หัวหน้า */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 25; background: var(--bg); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 12px; min-height: 68px; }
+.top .crest { width: 44px; height: 44px; flex: none; display: block; }
+.id { flex: 1; min-width: 0; display: grid; }
+.id span { font-size: 13px; color: var(--muted); }
+.id strong { font-size: 20px; font-weight: 600; line-height: 1.15; }
+.clock { display: grid; justify-items: end; font-variant-numeric: tabular-nums; }
+.clock b { font-size: 21px; font-weight: 600; line-height: 1.1; }
+.clock span { font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--gold-text); }
+.dev-btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; flex: none;
+  font: inherit; font-size: 13.5px; font-weight: 500; color: var(--gold-text);
+  background: var(--panel); border: 1px solid var(--line); border-radius: 20px; cursor: pointer; transition: border-color .2s ease;
+}
+.dev-btn:hover { border-color: var(--gold); }
+
+main.wrap { display: grid; gap: 16px; padding-block: 14px 36px; }
+.who { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.today { margin: 0; font-size: 14px; color: var(--muted); }
+.me { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-width: 0; }
+.me-name { font-size: 15px; font-weight: 600; }
+.me-until { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.out { min-height: 36px; padding: 0 14px; font: inherit; font-size: 13.5px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 18px; cursor: pointer; }
+.out:hover { border-color: var(--gold); }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.search { position: relative; flex: 1 1 260px; min-width: 0; }
+.search svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+#q { width: 100%; height: 48px; padding: 0 16px 0 44px; font: inherit; font-size: 15px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+#q::placeholder { color: var(--muted); }
+
+/* แถบหมวด: ปุ่มเม็ดยาบนจอกว้าง แถบด้านล่างบนมือถือ */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tab {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
+  font: inherit; font-size: 15px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 22px;
+  cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.tab svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tab:hover { border-color: var(--gold); }
+.tab[aria-pressed="true"] { background: var(--sel-bg); color: var(--sel-fg); border-color: var(--sel-bg); }
+
+/* แบนเนอร์ */
+.hero {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: clamp(12px, 2.4vw, 24px);
+  min-height: 140px; padding: 18px 18px 18px clamp(20px, 5vw, 48px); border-radius: 18px;
+  color: var(--white); box-shadow: 0 6px 18px var(--shadow);
+  background: linear-gradient(100deg, var(--navy-deep) 0%, var(--navy) 55%, var(--navy-lift) 100%);
+}
+.hero-img {
+  position: absolute; top: 0; right: 0; height: 100%; width: auto; max-width: none; display: block;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 26%); mask-image: linear-gradient(90deg, transparent 0, #000 26%);
+}
+.swoosh { position: absolute; left: 0; bottom: 0; width: clamp(78px, 10vw, 128px); height: 100%; display: block; }
+.hero .crest { position: relative; width: clamp(58px, 8.5vw, 88px); height: clamp(58px, 8.5vw, 88px); flex: none; display: block; }
+.hero .rule { position: relative; width: 1px; align-self: stretch; margin-block: 8px; background: var(--gold); flex: none; }
+.hero-text { position: relative; display: grid; gap: 4px; min-width: 0; }
+.hero-name { font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 5.4vw, 60px); line-height: 1; }
+.hero-sub { font-size: clamp(10px, 1.2vw, 13px); font-weight: 500; letter-spacing: .13em; color: var(--gold-hi); }
+
+/* กลุ่มไอคอน */
+.groups { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.panel { display: grid; align-content: start; gap: 12px; padding: 14px 12px 16px; min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 2px 8px var(--shadow); }
+.panel h2 { margin: 0 4px; display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.panel h2::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: var(--gold); flex: none; }
+.apps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 4px; }
+.wide .apps { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.app { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; padding: 6px 2px 4px; border-radius: 14px; color: var(--fg); text-decoration: none; text-align: center; -webkit-tap-highlight-color: transparent; }
+.tile {
+  width: 72px; height: 72px; border-radius: 20px; display: grid; place-items: center; align-content: center; gap: 3px;
+  color: var(--tile-ink); background: linear-gradient(155deg, var(--tile-a), var(--tile-b));
+  box-shadow: inset 0 0 0 1px var(--tile-edge), 0 4px 10px var(--shadow); transition: transform .18s ease, box-shadow .18s ease;
+}
+.tile svg { width: 40px; height: 40px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tile.has-badge svg { width: 32px; height: 32px; }
+.badge { font-size: 10.5px; font-weight: 600; line-height: 1; letter-spacing: .02em; }
+.label { font-size: 14px; font-weight: 500; line-height: 1.3; overflow-wrap: anywhere; }
+.nw { white-space: nowrap; }
+.app:hover .tile { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--gold), 0 8px 18px var(--shadow); }
+.app:active .tile { transform: scale(.93); }
+.empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.empty p { margin: 0 4px; }
+
+/* ปุ่ม */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; font: inherit; font-size: 15px; font-weight: 500; border-radius: 22px; cursor: pointer; text-decoration: none; }
+.btn.ghost { color: var(--fg); background: none; border: 1px solid var(--line); }
+.btn.solid { color: var(--sel-fg); background: var(--sel-bg); border: 1px solid var(--sel-bg); }
+
+/* โหมดผู้พัฒนา */
+.dlg { width: min(380px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--fg); background: var(--panel); box-shadow: 0 24px 60px rgba(5, 12, 24, .35); }
+.dlg::backdrop { background: rgba(5, 12, 24, .55); }
+.dlg form { display: grid; gap: 16px; padding: 22px; }
+.dlg-head { display: flex; align-items: center; gap: 12px; }
+.dlg-icon { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; color: var(--tile-ink); background: linear-gradient(155deg, var(--tile-a), var(--tile-b)); }
+.dlg h2 { margin: 0; font-size: 19px; font-weight: 600; }
+.dlg-body { display: grid; gap: 8px; }
+.dlg label { font-size: 14px; color: var(--muted); }
+#dev-pw { width: 100%; height: 48px; padding: 0 14px; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
+#dev-pw[aria-invalid="true"] { border-color: var(--danger); }
+.err { margin: 0; min-height: 1.4em; font-size: 14px; color: var(--danger); }
+.ok { margin: 0; font-size: 15px; }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+@media (max-width: 759px) {
+  .groups { grid-template-columns: minmax(0, 1fr); }
+  .wide .apps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tile { width: 64px; height: 64px; border-radius: 18px; }
+  .tile svg { width: 36px; height: 36px; }
+  .tile.has-badge svg { width: 28px; height: 28px; }
+  .badge { font-size: 9.5px; }
+  .label { font-size: 13px; }
+  .tabs {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0;
+    padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: var(--dock); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line);
+  }
+  .tab { flex-direction: column; justify-content: center; gap: 3px; min-height: 56px; padding: 0 2px; font-size: 11.5px; color: var(--muted); background: none; border: 0; border-radius: 12px; }
+  .tab svg { width: 24px; height: 24px; }
+  .tab[aria-pressed="true"] { background: none; color: var(--gold-text); }
+  .tab[aria-pressed="true"] svg { stroke-width: 2.2; }
+  main.wrap { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 420px) {
+  .hero { min-height: 116px; padding-right: 12px; }
+  .hero-img { opacity: .45; }
+  .top .wrap { gap: 10px; }
+  .top .crest { width: 40px; height: 40px; }
+  .id strong { font-size: 18px; }
+  .clock b { font-size: 18px; }
+  .dev-btn { padding: 0 11px; font-size: 12.5px; }
+  .dev-btn svg { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile, .tab, .dev-btn { transition: none; }
+  .app:hover .tile, .app:active .tile { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="8" y1="6" x2="56" y2="58">
+      <stop offset="0" stop-color="#eed6a3"/>
+      <stop offset=".55" stop-color="#bd9148"/>
+      <stop offset="1" stop-color="#eed6a3"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#bd9148"/>
+      <stop offset=".5" stop-color="#eed6a3"/>
+      <stop offset="1" stop-color="#bd9148"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- แสดงจนกว่าจะรู้ว่าเบราว์เซอร์นี้เข้าสู่ระบบอยู่ ถ้ายังไม่ได้เข้า หน้านี้พาไปหน้าเข้าสู่ระบบกลางทันที -->
+<div class="gate wrap" id="gate">
+  <div class="gate-box">
+    <span class="crest-slot"></span>
+    <h1>ศูนย์รวมระบบงาน ฝูงบิน 602</h1>
+    <p id="gate-msg" role="status">กำลังตรวจสอบการเข้าสู่ระบบ…</p>
+    <button class="btn solid" type="button" id="gate-retry" hidden>ลองอีกครั้ง</button>
+  </div>
+</div>
+
+<div id="shell" hidden>
+  <header class="top">
+    <div class="wrap">
+      <span class="crest-slot"></span>
+      <div class="id"><span>ศูนย์รวมระบบงาน</span><strong>ฝูงบิน 602</strong></div>
+      <div class="clock" aria-label="เวลาไทยและเวลา UTC"><b id="lt">--:--</b><span id="zt">----Z</span></div>
+      <button class="dev-btn" type="button" id="dev-open" aria-haspopup="dialog">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+        <span>โหมดผู้พัฒนา</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="who">
+      <p class="today" id="today"></p>
+      <div class="me">
+        <span class="me-name" id="me-name"></span>
+        <span class="me-until" id="me-until"></span>
+        <button class="out" type="button" id="out">ออกจากระบบ</button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M12 12l4.5 4.5"/></svg>
+        <input id="q" type="search" placeholder="ค้นหาระบบ เช่น A340, MEL" aria-label="ค้นหาระบบ" autocomplete="off">
+      </div>
+      <nav class="tabs" id="tabs" aria-label="หมวดระบบ"></nav>
+    </div>
+    <div id="content" style="display:grid;gap:16px"></div>
+  </main>
+</div>
+
+<dialog class="dlg" id="dev" aria-labelledby="dev-title">
+  <form id="dev-form" novalidate>
+    <div class="dlg-head">
+      <span class="dlg-icon"><svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></span>
+      <h2 id="dev-title">โหมดผู้พัฒนา</h2>
+    </div>
+    <div id="dev-ask" class="dlg-body">
+      <label for="dev-pw">รหัสผ่าน</label>
+      <input id="dev-pw" type="password" autocomplete="off" aria-describedby="dev-err">
+      <p class="err" id="dev-err" role="alert"></p>
+      <div class="dlg-actions">
+        <button class="btn ghost" type="button" data-close>ยกเลิก</button>
+        <button class="btn solid" type="submit">ยืนยัน</button>
+      </div>
+    </div>
+    <div id="dev-ok" class="dlg-body" hidden>
+      <p class="ok">รหัสผ่านถูกต้อง</p>
+      <div class="dlg-actions">
+        <button class="btn ghost" type="button" data-close>ปิด</button>
+        <a class="btn solid" id="dev-go" href="/eadmin/" target="_blank" rel="noopener">เข้าสู่โหมดผู้พัฒนา</a>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<!-- ระบบเข้าสู่ระบบกลางของ ฝูง.602 (repo eadmin บน GitHub Pages เดียวกัน): เข้าครั้งเดียวใช้ได้ทุกเว็บ -->
+<script src="/eadmin/assets/config.js"></script>
+<script src="/eadmin/assets/app.js"></script>
+<script>
+(() => {
+'use strict';
+const PLANE = 'M12 2c.9 0 1.5 1 1.5 2.2V9l7.5 4.5v2l-7.5-2.2v4.6l2.2 1.6V21L12 20l-3.7 1v-1.5l2.2-1.6v-4.6L3 15.5v-2L10.5 9V4.2C10.5 3 11.1 2 12 2z';
+const plane = (x, y, s, fill) => `<g transform="translate(${x} ${y}) scale(${s}) translate(-12 -11.5)"><path d="${PLANE}" fill="${fill}" stroke="none"/></g>`;
+const ic = inner => `<svg viewBox="0 0 64 64" aria-hidden="true">${inner}</svg>`;
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const CREST = `<svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
+  <circle cx="32" cy="32" r="31" fill="#0a2140" stroke="url(#gold)" stroke-width="1.6"/>
+  <circle cx="32" cy="32" r="27.6" fill="none" stroke="url(#gold)" stroke-width=".6"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="url(#gold)" stroke-width="3.6" stroke-dasharray="4.12 4.12"/>
+  <circle cx="32" cy="32" r="18" fill="none" stroke="url(#gold)" stroke-width=".9"/>
+  ${plane(32, 32, 1.05, 'url(#gold)')}
+</svg>`;
+document.querySelectorAll('.crest-slot').forEach(el => { el.outerHTML = CREST; });
+
+/* ---------- รายชื่อระบบ: เพิ่มหรือแก้ระบบที่นี่ ----------
+   slug คือชื่อ repo บน rtaf602.github.io  short คือชื่อใต้ไอคอน  title คือชื่อเต็ม (ใช้ในผลค้นหาและ "ใช้ล่าสุด")
+   badge คือแบบเครื่องที่พิมพ์บนไอคอน  kw คือคำที่ใช้ค้นหาได้ */
+const icons = {
+  report: ic(`<rect x="14" y="12" width="36" height="45" rx="4"/><path d="M24 12v-2a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2z"/>` +
+    [26, 36, 46].map(y => `<path d="M20 ${y}l2.5 2.5 4.5-5M33 ${y}h11"/>`).join('')),
+  gauge: ic(`<path d="M8 47a24 24 0 1 1 48 0"/><path d="M8 47v4M56 47v4"/>` +
+    [-60, -30, 0, 30, 60].map(a => `<path d="M32 23v5" transform="rotate(${a} 32 47)"/>`).join('') +
+    `<path d="M33.8 45L44 31"/><circle cx="32" cy="47" r="3"/>`),
+  calendar: ic(`<rect x="9" y="14" width="46" height="41" rx="4"/><path d="M9 25h46M21 8v10M43 8v10"/>` +
+    [31, 42].map(y => [17, 29, 41].map(x => `<rect x="${x}" y="${y}" width="6.5" height="6" rx="1"/>`).join('')).join('')),
+  globe: ic(`<circle cx="32" cy="32" r="24"/><ellipse cx="32" cy="32" rx="11.5" ry="24"/><path d="M8 32h48M12 20h40M12 44h40"/>`),
+  book: ic(`<path d="M13 52V12a4 4 0 0 1 4-4h34v40H17a4 4 0 0 0-4 4a4 4 0 0 0 4 4h34v-8"/>` + plane(32, 27, 1.05, 'currentColor')),
+  seatmap: ic(`<rect x="13" y="5" width="38" height="54" rx="6"/>` +
+    [12, 26, 40].map(y => [20, 34].map(x => `<rect x="${x}" y="${y}" width="10" height="11" rx="2"/>`).join('')).join('')),
+  cabin: ic(`<path d="M10 7h44" stroke-width="3.4"/><path d="M32 8v5M26 13h12l-2.5 5h-7z"/>` +
+    `<path d="M13 28c-.6-2.8 3.2-4.2 4.6-1.7L25 40h12c2.8 0 4.5 1.9 4.5 4.5S39.8 49 37 49H21c-2 0-3.5-1.2-4-3z"/><path d="M26 49v8M35 49v8M20 58h21"/>` +
+    `<path d="M47 37h9M51.5 37v21M47 58h9"/>`)
+};
+const TYPES = ['A319', 'A320-03', 'A320-05', 'A340'];
+const GROUPS = [
+  { id: 'status', title: 'สถานภาพอากาศยานประจำวัน', items: [
+    { slug: 'daily-aircraft-status-report', icon: icons.report, short: 'สภาพ บ.<span class="nw">ประจำวัน</span>', title: 'สภาพ บ.ประจำวัน', kw: 'daily report รายงาน ชั่วโมงบิน' },
+    { slug: 'temporary-ac-status', icon: icons.gauge, short: 'Aircraft Status', title: 'Aircraft Status', kw: 'temporary ac สถานภาพ mel' }
+  ]},
+  { id: 'mission', title: 'แผนและภารกิจ', items: [
+    { slug: '3mcalendar', icon: icons.calendar, short: 'Master Plan 3M', title: 'Master Plan 3M', kw: 'calendar ปฏิทิน แผน ซ่อมบำรุง' },
+    { slug: 'overseas-mission', icon: icons.globe, short: 'ภารกิจ<span class="nw">ต่างประเทศ</span>', title: 'ภารกิจต่างประเทศ', kw: 'overseas mission callsign' },
+    { slug: 'logbook', icon: icons.book, short: 'Log Book', title: 'Air Transport Log Book', kw: 'logbook สมุดบันทึก ชั่วโมงบิน' }
+  ]},
+  { id: 'pax', title: 'ผังที่นั่งผู้โดยสาร', items: TYPES.map(t => ({
+    slug: t.toLowerCase() + '_seatplan_passenger', icon: icons.seatmap, badge: t, short: t, title: t + ' ผู้โดยสาร', kw: 'seat plan passenger รายชื่อ boarding pass'
+  }))},
+  { id: 'cabin', title: 'สภาพที่นั่งและห้องโดยสาร', items: TYPES.map(t => ({
+    slug: t.toLowerCase() + '_seatplan', icon: icons.cabin, badge: t, short: t, title: t + ' สภาพที่นั่ง', kw: 'status seat plan monitor จอ ช่าง สื่อสาร'
+  }))}
+];
+const ALL = GROUPS.flatMap(g => g.items);
+const find = slug => ALL.find(it => it.slug === slug);
+const url = slug => `/${slug}/`;
+const norm = s => s.toLowerCase().replace(/[\s\-()]/g, '');
+const matches = (it, term) => norm(`${it.title} ${it.slug} ${it.kw}`).includes(term);
+
+const s24 = inner => `<svg viewBox="0 0 24 24" aria-hidden="true">${inner}</svg>`;
+const TABS = [
+  { id: 'all', label: 'ทั้งหมด', icon: s24('<rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/>') },
+  { id: 'status', label: 'สถานภาพ', icon: s24('<path d="M3 17a9 9 0 0 1 18 0"/><path d="M12.6 16.3L16.5 11.5"/><circle cx="12" cy="17" r="1.3"/>') },
+  { id: 'mission', label: 'ภารกิจ', icon: s24('<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>') },
+  { id: 'pax', label: 'ผู้โดยสาร', icon: s24('<rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M8.5 7h2.5M13 7h2.5M8.5 12h2.5M13 12h2.5M8.5 17h2.5M13 17h2.5"/>') },
+  { id: 'cabin', label: 'ห้องโดยสาร', icon: s24('<path d="M6 5c-.3-1.5 1.7-2.2 2.4-.9L11.5 13H17a2.5 2.5 0 0 1 0 5H9.5a2 2 0 0 1-1.9-1.4z"/><path d="M10 18v3M16 18v3M8 21h10"/>') }
+];
+
+/* "ใช้ล่าสุด": จำไว้ในเบราว์เซอร์นี้เท่านั้น */
+const KEY = 'rtaf602-app:recent';
+let recent = [];
+try { recent = (JSON.parse(localStorage.getItem(KEY)) || []).filter(find); } catch (e) { recent = []; }
+const remember = slug => {
+  if (!find(slug)) return;
+  recent = [slug, ...recent.filter(s => s !== slug)].slice(0, 4);
+  try { localStorage.setItem(KEY, JSON.stringify(recent)); } catch (e) { /* จำได้จนปิดหน้า */ }
+};
+
+let tab = 'all';
+const content = $('content'), tabsEl = $('tabs'), q = $('q');
+const HERO = `<div class="hero">
+  <img class="hero-img" src="hero-plane.jpg" alt="">
+  <svg class="swoosh" viewBox="0 0 165 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 76C30 125 85 175 158 200H78C45 178 18 140 0 104z" fill="url(#sweep)"/></svg>
+  ${CREST}<span class="rule"></span>
+  <span class="hero-text"><span class="hero-name">Squadron 602</span><span class="hero-sub">AVIATION OPERATIONS</span></span>
+</div>`;
+const app = (it, full) => `<a class="app" href="${url(it.slug)}" target="_blank" rel="noopener" data-slug="${it.slug}" aria-label="${it.title}">
+  <span class="tile${it.badge ? ' has-badge' : ''}">${it.icon}${it.badge ? `<span class="badge">${it.badge}</span>` : ''}</span>
+  <span class="label">${full ? it.title : it.short}</span>
+</a>`;
+const panel = (title, items, wide, full) => `<section class="panel${wide ? ' wide' : ''}"><h2>${title}</h2><div class="apps">${items.map(it => app(it, full)).join('')}</div></section>`;
+
+function render() {
+  const term = norm(q.value);
+  tabsEl.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(!term && b.dataset.tab === tab)));
+  if (term) {
+    const hits = ALL.filter(it => matches(it, term));
+    content.innerHTML = hits.length
+      ? panel('ผลการค้นหา', hits, true, true)
+      : `<div class="panel empty"><p>ไม่พบระบบที่ค้นหา ลองพิมพ์แบบ บ. หรือชื่องาน</p><button class="btn solid" type="button" data-clear>ล้างคำค้น</button></div>`;
+    return;
+  }
+  if (tab === 'all') {
+    const rec = recent.map(find).filter(Boolean);
+    content.innerHTML = HERO + (rec.length ? panel('ใช้ล่าสุด', rec, true, true) : '') +
+      `<div class="groups">${GROUPS.map(g => panel(g.title, g.items, false, false)).join('')}</div>`;
+  } else {
+    const g = GROUPS.find(x => x.id === tab);
+    content.innerHTML = panel(g.title, g.items, true, false);
+  }
+}
+tabsEl.innerHTML = TABS.map(t => `<button class="tab" type="button" data-tab="${t.id}" aria-pressed="false">${t.icon}<span>${t.label}</span></button>`).join('');
+tabsEl.addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  tab = b.dataset.tab; q.value = ''; render(); window.scrollTo({ top: 0 });
+});
+content.addEventListener('click', e => {
+  const a = e.target.closest('a[data-slug]');
+  if (a) { remember(a.dataset.slug); return; }
+  if (e.target.closest('[data-clear]')) { q.value = ''; render(); q.focus(); }
+});
+q.addEventListener('input', render);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !q.value && !$('shell').hidden) render(); });
+
+/* ---------- เวลาไทย เวลา Zulu และวันที่ ---------- */
+const pad = n => String(n).padStart(2, '0');
+function tick() {
+  const d = new Date();
+  $('lt').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('zt').textContent = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}Z`;
+  try { $('today').textContent = d.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { /* ไม่แสดงวันที่ */ }
+}
+
+/* ---------- โหมดผู้พัฒนา: ตรวจรหัสกับค่า SHA-256 หน้าเว็บจึงไม่มีรหัสจริงอยู่ (วิธีเปลี่ยนรหัสอยู่ใน README) ---------- */
+const DEV_HASH = 'af494a890a37f4ed701860afc4d94e250839f9e1c98d366c0d98ed548c335240';
+const dlg = $('dev'), pw = $('dev-pw'), err = $('dev-err'), ask = $('dev-ask'), ok = $('dev-ok');
+const sha256 = async s => {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+};
+const resetDev = () => { pw.value = ''; err.textContent = ''; pw.removeAttribute('aria-invalid'); ask.hidden = false; ok.hidden = true; };
+const closeDev = () => { if (dlg.open) dlg.close(); resetDev(); };
+$('dev-open').addEventListener('click', () => {
+  resetDev();
+  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  pw.focus();
+});
+$('dev-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!ok.hidden) return;
+  if (!pw.value) { err.textContent = 'กรุณาใส่รหัสผ่าน'; pw.setAttribute('aria-invalid', 'true'); pw.focus(); return; }
+  let hash = '';
+  try { hash = await sha256(pw.value); } catch (x) { err.textContent = 'เบราว์เซอร์นี้ตรวจรหัสผ่านไม่ได้ ลองเปิดด้วย Chrome หรือ Safari'; return; }
+  if (hash === DEV_HASH) { ask.hidden = true; ok.hidden = false; $('dev-go').focus(); }
+  else { err.textContent = 'รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง'; pw.setAttribute('aria-invalid', 'true'); pw.select(); }
+});
+dlg.addEventListener('click', e => { if (e.target.closest('[data-close]') || e.target === dlg) closeDev(); });
+dlg.addEventListener('close', resetDev);
+$('dev-go').addEventListener('click', () => setTimeout(closeDev, 300));
+
+/* ---------- การเข้าสู่ระบบ (ระบบกลาง ฝูง.602 ใน repo eadmin) ----------
+   ยังไม่ได้เข้าสู่ระบบในเบราว์เซอร์นี้: ไปหน้าเข้าสู่ระบบ แล้วกลับมาที่นี่หลังเข้าเสร็จ
+   ครบ 1 ชั่วโมง การเข้าจากเครื่องอื่น และการออกจากระบบในแท็บอื่น App.watch ดูแลเหมือนทุกเว็บ */
+const AUTH = window.App;
+function gate(msg, retry) {
+  $('shell').hidden = true; $('gate').hidden = false;
+  $('gate-msg').textContent = msg; $('gate-retry').hidden = !retry;
+}
+$('gate-retry').addEventListener('click', () => location.reload());
+function showUser(s) {
+  if (!s) return;
+  const u = s.user || {};
+  $('me-name').textContent = ((u.rank ? u.rank + ' ' : '') + (u.name || u.username || '')).trim();
+  try { $('me-until').textContent = 'ใช้งานได้ถึง ' + AUTH.fmtT(s.exp) + ' น.'; } catch (e) { $('me-until').textContent = ''; }
+}
+function open(s) {
+  $('gate').hidden = true; $('shell').hidden = false;
+  showUser(s); tick(); setInterval(tick, 15000); render();
+}
+$('out').addEventListener('click', () => AUTH.signOut(''));
+
+if (!AUTH) gate('ติดต่อระบบเข้าสู่ระบบกลางไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองอีกครั้ง', true);
+else if (!AUTH.hasBackend) gate('ไม่พบที่อยู่ระบบเข้าสู่ระบบกลาง (eadmin) หน้านี้จึงยังใช้งานไม่ได้', false);
+else if (!AUTH.session()) AUTH.toLogin();
+else {
+  // การเข้าสู่ระบบของเบราว์เซอร์นี้เปลี่ยนในแท็บอื่น: ออกแล้วไปหน้าเข้าสู่ระบบ หรือเป็นอีกบัญชีก็แสดงชื่อใหม่
+  AUTH.watch((s) => { if (!s) { AUTH.toLogin(); return; } showUser(s); });
+  open(AUTH.session());
+  // ถามระบบกลางอีกครั้ง: Role วันสิ้นสุด หรือรหัสผ่านอาจเปลี่ยนแล้ว ถ้าใช้ต่อไม่ได้ App พาไปหน้าเข้าสู่ระบบเอง
+  AUTH.api('me').then(r => { if (r.user) AUTH.setUser(r.user, r.expiresAt); showUser(AUTH.session()); }, () => {});
+}
+})();
+</script>
+</body>
+</html>
