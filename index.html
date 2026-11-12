@@ -190,7 +190,7 @@ main.wrap { display: grid; gap: 16px; padding-block: 14px 36px; }
   .label { font-size: 13px; }
   .tabs {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0;
+    display: grid; grid-template-columns: repeat(var(--tabs, 5), minmax(0, 1fr)); gap: 0;
     padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
     background: var(--dock); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line);
   }
@@ -323,8 +323,8 @@ const CREST = `<svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
 document.querySelectorAll('.crest-slot').forEach(el => { el.outerHTML = CREST; });
 
 /* ---------- รายชื่อระบบ: เพิ่มหรือแก้ระบบที่นี่ ----------
-   slug คือชื่อ repo บน rtaf602.github.io  short คือชื่อใต้ไอคอน  title คือชื่อเต็ม (ใช้ในผลค้นหาและ "ใช้ล่าสุด")
-   badge คือแบบเครื่องที่พิมพ์บนไอคอน  kw คือคำที่ใช้ค้นหาได้ */
+   slug คือชื่อ repo บน rtaf602.github.io  code คือรหัสเว็บในรายชื่อเว็บของหน้า Admin (ระบบกลาง) ใช้ตัดสินว่าใครเห็นไอคอนนี้
+   short คือชื่อใต้ไอคอน  title คือชื่อเต็ม (ใช้ในผลค้นหาและ "ใช้ล่าสุด")  badge คือแบบเครื่องที่พิมพ์บนไอคอน  kw คือคำที่ใช้ค้นหาได้ */
 const icons = {
   report: ic(`<rect x="14" y="12" width="36" height="45" rx="4"/><path d="M24 12v-2a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2a2 2 0 0 1-2 2H26a2 2 0 0 1-2-2z"/>` +
     [26, 36, 46].map(y => `<path d="M20 ${y}l2.5 2.5 4.5-5M33 ${y}h11"/>`).join('')),
@@ -342,21 +342,23 @@ const icons = {
     `<path d="M47 37h9M51.5 37v21M47 58h9"/>`)
 };
 const TYPES = ['A319', 'A320-03', 'A320-05', 'A340'];
+const PAX_CODE = { 'A319': 'WEB9', 'A320-03': 'WEB8', 'A320-05': 'WEB7', 'A340': 'WEB6' };        // SEAT PLAN FOR PASSENGER
+const CABIN_CODE = { 'A319': 'WEB5', 'A320-03': 'WEB4', 'A320-05': 'WEB3', 'A340': 'WEB2' };      // SEAT PLAN FOR CREW
 const GROUPS = [
   { id: 'status', title: 'สถานภาพอากาศยานประจำวัน', items: [
-    { slug: 'daily-aircraft-status-report', icon: icons.report, short: 'สภาพ บ.<span class="nw">ประจำวัน</span>', title: 'สภาพ บ.ประจำวัน', kw: 'daily report รายงาน ชั่วโมงบิน' },
-    { slug: 'temporary-ac-status', icon: icons.gauge, short: 'Aircraft Status', title: 'Aircraft Status', kw: 'temporary ac สถานภาพ mel' }
+    { slug: 'daily-aircraft-status-report', code: 'WEB12', icon: icons.report, short: 'สภาพ บ.<span class="nw">ประจำวัน</span>', title: 'สภาพ บ.ประจำวัน', kw: 'daily report รายงาน ชั่วโมงบิน' },
+    { slug: 'temporary-ac-status', code: 'WEB13', icon: icons.gauge, short: 'Aircraft Status', title: 'Aircraft Status', kw: 'temporary ac สถานภาพ mel' }
   ]},
   { id: 'mission', title: 'แผนและภารกิจ', items: [
-    { slug: '3mcalendar', icon: icons.calendar, short: 'Master Plan 3M', title: 'Master Plan 3M', kw: 'calendar ปฏิทิน แผน ซ่อมบำรุง' },
-    { slug: 'overseas-mission', icon: icons.globe, short: 'ภารกิจ<span class="nw">ต่างประเทศ</span>', title: 'ภารกิจต่างประเทศ', kw: 'overseas mission callsign' },
-    { slug: 'logbook', icon: icons.book, short: 'Log Book', title: 'Air Transport Log Book', kw: 'logbook สมุดบันทึก ชั่วโมงบิน' }
+    { slug: '3mcalendar', code: 'WEB1', icon: icons.calendar, short: 'Master Plan 3M', title: 'Master Plan 3M', kw: 'calendar ปฏิทิน แผน ซ่อมบำรุง' },
+    { slug: 'overseas-mission', code: 'WEB10', icon: icons.globe, short: 'ภารกิจ<span class="nw">ต่างประเทศ</span>', title: 'ภารกิจต่างประเทศ', kw: 'overseas mission callsign' },
+    { slug: 'logbook', code: 'WEB11', icon: icons.book, short: 'Log Book', title: 'Air Transport Log Book', kw: 'logbook สมุดบันทึก ชั่วโมงบิน' }
   ]},
   { id: 'pax', title: 'ผังที่นั่งผู้โดยสาร', items: TYPES.map(t => ({
-    slug: t.toLowerCase() + '_seatplan_passenger', icon: icons.seatmap, badge: t, short: t, title: t + ' ผู้โดยสาร', kw: 'seat plan passenger รายชื่อ boarding pass'
+    slug: t.toLowerCase() + '_seatplan_passenger', code: PAX_CODE[t], icon: icons.seatmap, badge: t, short: t, title: t + ' ผู้โดยสาร', kw: 'seat plan passenger รายชื่อ boarding pass'
   }))},
   { id: 'cabin', title: 'สภาพที่นั่งและห้องโดยสาร', items: TYPES.map(t => ({
-    slug: t.toLowerCase() + '_seatplan', icon: icons.cabin, badge: t, short: t, title: t + ' สภาพที่นั่ง', kw: 'status seat plan monitor จอ ช่าง สื่อสาร'
+    slug: t.toLowerCase() + '_seatplan', code: CABIN_CODE[t], icon: icons.cabin, badge: t, short: t, title: t + ' สภาพที่นั่ง', kw: 'status seat plan monitor จอ ช่าง สื่อสาร'
   }))}
 ];
 const ALL = GROUPS.flatMap(g => g.items);
@@ -398,22 +400,72 @@ const app = (it, full) => `<a class="app" href="${url(it.slug)}" target="_blank"
 </a>`;
 const panel = (title, items, wide, full) => `<section class="panel${wide ? ' wide' : ''}"><h2>${title}</h2><div class="apps">${items.map(it => app(it, full)).join('')}</div></section>`;
 
+/* ---------- ระบบที่บัญชีนี้ใช้ได้ (สิทธิ์เว็บในระบบกลาง: ถาม web.mine ครั้งเดียวเมื่อเปิดหน้า) ----------
+   แสดงเฉพาะไอคอนของระบบที่บัญชีนี้มีสิทธิ์ จับคู่ด้วยรหัสเว็บ (code) ซึ่งแก้ไม่ได้ในหน้า Admin
+   allowed: null = ยังไม่รู้ (กำลังถาม)  'all' = ระบบกลางยังเป็นรุ่นที่ไม่มี web.mine จึงแสดงทุกระบบเหมือนเดิม  Set = รหัสที่ใช้ได้
+   รายการล่าสุดจำไว้ในเบราว์เซอร์นี้แยกตามบัญชี ครั้งถัดไปจึงแสดงไอคอนได้ทันทีระหว่างที่ถามใหม่
+   การซ่อนไอคอนเป็นแค่การจัดหน้าจอ ระบบที่ต่อกับระบบกลางแล้วตรวจสิทธิ์ของตัวเองอีกครั้งด้วย web.enter */
+let allowed = null, websErr = '', websAt = 0, websOf = '';
+const shown = it => allowed === 'all' || (allowed instanceof Set && allowed.has(it.code));
+const webKey = u => 'rtaf602-app:webs:' + u;
+function loadWebs() {
+  const s = AUTH.session(); if (!s) return;
+  const u = s.user.username;
+  if (websOf !== u) {                                   // another account: start from what this browser remembers of it
+    websOf = u; allowed = null; websErr = '';
+    try { const c = JSON.parse(localStorage.getItem(webKey(u)) || 'null'); if (Array.isArray(c)) allowed = new Set(c); } catch (e) { /* asked below */ }
+  }
+  websAt = Date.now(); render();
+  AUTH.api('web.mine').then(r => {
+    if (r.user) AUTH.setUser(r.user, r.expiresAt);
+    showUser(AUTH.session());
+    if (websOf !== u) return;
+    const codes = (r.webs || []).map(w => w.code);
+    allowed = new Set(codes); websErr = '';
+    try { localStorage.setItem(webKey(u), JSON.stringify(codes)); } catch (e) { /* asked again next time */ }
+    render();
+  }, e => {
+    if (websOf !== u) return;
+    if (e && e.code === 'bad_request') {                 // ระบบกลางยังไม่ได้อัปเดต Apps Script เป็นรุ่นที่มี web.mine
+      allowed = 'all'; render();
+      AUTH.api('me').then(r => { if (r.user) AUTH.setUser(r.user, r.expiresAt); showUser(AUTH.session()); }, () => {});
+      return;
+    }
+    if (allowed === null) { websErr = (e && e.message) || 'ติดต่อระบบไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองอีกครั้ง'; render(); }
+  });
+}
+
 function render() {
   const term = norm(q.value);
+  const groups = GROUPS.map(g => Object.assign({}, g, { items: g.items.filter(shown) })).filter(g => g.items.length);
+  // แถบหมวด: เฉพาะหมวดที่มีระบบที่บัญชีนี้ใช้ได้
+  tabsEl.querySelectorAll('.tab').forEach(b => { b.hidden = b.dataset.tab !== 'all' && allowed !== null && !groups.some(g => g.id === b.dataset.tab); });
+  if (tab !== 'all' && allowed !== null && !groups.some(g => g.id === tab)) tab = 'all';
+  tabsEl.style.setProperty('--tabs', String(tabsEl.querySelectorAll('.tab:not([hidden])').length));
   tabsEl.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(!term && b.dataset.tab === tab)));
+  if (allowed === null) {
+    content.innerHTML = HERO + (websErr
+      ? `<div class="panel empty" role="alert"><p>${esc(websErr)}</p><button class="btn solid" type="button" data-retry>ลองอีกครั้ง</button></div>`
+      : `<div class="panel empty" role="status"><p>กำลังโหลดระบบที่บัญชีนี้ใช้ได้…</p></div>`);
+    return;
+  }
+  if (!groups.length) {
+    content.innerHTML = HERO + `<div class="panel empty" role="status"><p>บัญชีนี้ยังไม่มีสิทธิ์ใช้งานระบบใด ให้ติดต่อ Admin</p></div>`;
+    return;
+  }
   if (term) {
-    const hits = ALL.filter(it => matches(it, term));
+    const hits = groups.flatMap(g => g.items).filter(it => matches(it, term));
     content.innerHTML = hits.length
       ? panel('ผลการค้นหา', hits, true, true)
       : `<div class="panel empty"><p>ไม่พบระบบที่ค้นหา ลองพิมพ์แบบ บ. หรือชื่องาน</p><button class="btn solid" type="button" data-clear>ล้างคำค้น</button></div>`;
     return;
   }
   if (tab === 'all') {
-    const rec = recent.map(find).filter(Boolean);
+    const rec = recent.map(find).filter(it => it && shown(it));
     content.innerHTML = HERO + (rec.length ? panel('ใช้ล่าสุด', rec, true, true) : '') +
-      `<div class="groups">${GROUPS.map(g => panel(g.title, g.items, false, false)).join('')}</div>`;
+      `<div class="groups">${groups.map(g => panel(g.title, g.items, false, false)).join('')}</div>`;
   } else {
-    const g = GROUPS.find(x => x.id === tab);
+    const g = groups.find(x => x.id === tab);
     content.innerHTML = panel(g.title, g.items, true, false);
   }
 }
@@ -427,9 +479,14 @@ content.addEventListener('click', e => {
   const a = e.target.closest('a[data-slug]');
   if (a) { remember(a.dataset.slug); return; }
   if (e.target.closest('[data-clear]')) { q.value = ''; render(); q.focus(); }
+  if (e.target.closest('[data-retry]')) { websErr = ''; loadWebs(); }
 });
 q.addEventListener('input', render);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !q.value && !$('shell').hidden) render(); });
+// กลับมาที่แท็บนี้: แสดง "ใช้ล่าสุด" ใหม่ และถามสิทธิ์อีกครั้งถ้าถามไว้นานกว่า 1 นาที
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || $('shell').hidden) return;
+  if (AUTH && AUTH.session() && Date.now() - websAt > 60000) loadWebs(); else if (!q.value) render();
+});
 
 /* ---------- เวลาไทย เวลา Zulu และวันที่ ---------- */
 const pad = n => String(n).padStart(2, '0');
@@ -493,10 +550,10 @@ else if (!AUTH.hasBackend) gate('ไม่พบที่อยู่ระบ�
 else if (!AUTH.session()) AUTH.toLogin();
 else {
   // การเข้าสู่ระบบของเบราว์เซอร์นี้เปลี่ยนในแท็บอื่น: ออกแล้วไปหน้าเข้าสู่ระบบ หรือเป็นอีกบัญชีก็แสดงชื่อใหม่
-  AUTH.watch((s) => { if (!s) { AUTH.toLogin(); return; } showUser(s); });
+  AUTH.watch((s) => { if (!s) { AUTH.toLogin(); return; } showUser(s); if (s.user.username !== websOf) loadWebs(); });
   open(AUTH.session());
-  // ถามระบบกลางอีกครั้ง: Role วันสิ้นสุด หรือรหัสผ่านอาจเปลี่ยนแล้ว ถ้าใช้ต่อไม่ได้ App พาไปหน้าเข้าสู่ระบบเอง
-  AUTH.api('me').then(r => { if (r.user) AUTH.setUser(r.user, r.expiresAt); showUser(AUTH.session()); }, () => {});
+  // ถามระบบกลาง: ระบบที่บัญชีนี้ใช้ได้ (คำตอบนี้ตรวจ Role วันสิ้นสุด และรหัสผ่านด้วย ถ้าใช้ต่อไม่ได้ App พาไปหน้าเข้าสู่ระบบเอง)
+  loadWebs();
 }
 })();
 </script>
