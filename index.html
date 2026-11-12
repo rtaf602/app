@@ -159,6 +159,8 @@ main.wrap { display: grid; gap: 16px; padding-block: 14px 36px; }
 .app:active .tile { transform: scale(.93); }
 .empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .empty p { margin: 0 4px; }
+.notice { border-color: var(--gold); padding: 12px 16px; }
+.notice p { margin: 0; font-size: 14px; line-height: 1.5; }
 
 /* ปุ่ม */
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; font: inherit; font-size: 15px; font-weight: 500; border-radius: 22px; cursor: pointer; text-decoration: none; }
@@ -405,7 +407,7 @@ const panel = (title, items, wide, full) => `<section class="panel${wide ? ' wid
    allowed: null = ยังไม่รู้ (กำลังถาม)  'all' = ระบบกลางยังเป็นรุ่นที่ไม่มี web.mine จึงแสดงทุกระบบเหมือนเดิม  Set = รหัสที่ใช้ได้
    รายการล่าสุดจำไว้ในเบราว์เซอร์นี้แยกตามบัญชี ครั้งถัดไปจึงแสดงไอคอนได้ทันทีระหว่างที่ถามใหม่
    การซ่อนไอคอนเป็นแค่การจัดหน้าจอ ระบบที่ต่อกับระบบกลางแล้วตรวจสิทธิ์ของตัวเองอีกครั้งด้วย web.enter */
-let allowed = null, websErr = '', websAt = 0, websOf = '';
+let allowed = null, websErr = '', websAt = 0, websOf = '', websOld = false;
 const shown = it => allowed === 'all' || (allowed instanceof Set && allowed.has(it.code));
 const webKey = u => 'rtaf602-app:webs:' + u;
 function loadWebs() {
@@ -421,13 +423,13 @@ function loadWebs() {
     showUser(AUTH.session());
     if (websOf !== u) return;
     const codes = (r.webs || []).map(w => w.code);
-    allowed = new Set(codes); websErr = '';
+    allowed = new Set(codes); websErr = ''; websOld = false;
     try { localStorage.setItem(webKey(u), JSON.stringify(codes)); } catch (e) { /* asked again next time */ }
     render();
   }, e => {
     if (websOf !== u) return;
     if (e && e.code === 'bad_request') {                 // ระบบกลางยังไม่ได้อัปเดต Apps Script เป็นรุ่นที่มี web.mine
-      allowed = 'all'; render();
+      allowed = 'all'; websOld = true; render();
       AUTH.api('me').then(r => { if (r.user) AUTH.setUser(r.user, r.expiresAt); showUser(AUTH.session()); }, () => {});
       return;
     }
@@ -453,6 +455,10 @@ function render() {
     content.innerHTML = HERO + `<div class="panel empty" role="status"><p>บัญชีนี้ยังไม่มีสิทธิ์ใช้งานระบบใด ให้ติดต่อ Admin</p></div>`;
     return;
   }
+  // ระบบกลางยังไม่มี web.mine จึงแสดงทุกระบบกับทุกคน: บอก Admin ให้รู้ ไม่ปล่อยให้ดูเหมือนสิทธิ์ใช้ไม่ได้ (ผู้ใช้เจอ 12 พ.ย.)
+  const me = (AUTH && AUTH.session() || {}).user || {};
+  const old = websOld && me.role === 'Admin'
+    ? `<div class="panel notice" role="status"><p><b>ตอนนี้ทุกคนเห็นทุกระบบ</b> เพราะระบบเข้าสู่ระบบกลางบน Apps Script ยังเป็นรุ่นเก่า ให้วางโค้ด Code.gs รุ่นใหม่แล้ว Deploy เป็น New version (ข้อความนี้เห็นเฉพาะ Admin)</p></div>` : '';
   if (term) {
     const hits = groups.flatMap(g => g.items).filter(it => matches(it, term));
     content.innerHTML = hits.length
@@ -462,7 +468,7 @@ function render() {
   }
   if (tab === 'all') {
     const rec = recent.map(find).filter(it => it && shown(it));
-    content.innerHTML = HERO + (rec.length ? panel('ใช้ล่าสุด', rec, true, true) : '') +
+    content.innerHTML = HERO + old + (rec.length ? panel('ใช้ล่าสุด', rec, true, true) : '') +
       `<div class="groups">${groups.map(g => panel(g.title, g.items, false, false)).join('')}</div>`;
   } else {
     const g = groups.find(x => x.id === tab);
