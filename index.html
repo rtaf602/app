@@ -336,6 +336,8 @@ const icons = {
   calendar: ic(`<rect x="9" y="14" width="46" height="41" rx="4"/><path d="M9 25h46M21 8v10M43 8v10"/>` +
     [31, 42].map(y => [17, 29, 41].map(x => `<rect x="${x}" y="${y}" width="6.5" height="6" rx="1"/>`).join('')).join('')),
   globe: ic(`<circle cx="32" cy="32" r="24"/><ellipse cx="32" cy="32" rx="11.5" ry="24"/><path d="M8 32h48M12 20h40M12 44h40"/>`),
+  review: ic(`<path d="M42 30V12a4 4 0 0 0-4-4H14a4 4 0 0 0-4 4v40a4 4 0 0 0 4 4h16"/><path d="M18 19h16M18 28h12M18 37h8"/>` +
+    `<circle cx="44" cy="44" r="10"/><path d="M51.5 51.5L58 58" stroke-width="3.4"/><path d="M40 44l3 3 5.5-6"/>`),
   book: ic(`<path d="M13 52V12a4 4 0 0 1 4-4h34v40H17a4 4 0 0 0-4 4a4 4 0 0 0 4 4h34v-8"/>` + plane(32, 27, 1.05, 'currentColor')),
   seatmap: ic(`<rect x="13" y="5" width="38" height="54" rx="6"/>` +
     [12, 26, 40].map(y => [20, 34].map(x => `<rect x="${x}" y="${y}" width="10" height="11" rx="2"/>`).join('')).join('')),
@@ -354,7 +356,8 @@ const GROUPS = [
   { id: 'mission', title: 'แผนและภารกิจ', items: [
     { slug: '3mcalendar', code: 'WEB1', icon: icons.calendar, short: 'Master Plan 3M', title: 'Master Plan 3M', kw: 'calendar ปฏิทิน แผน ซ่อมบำรุง' },
     { slug: 'overseas-mission', code: 'WEB10', icon: icons.globe, short: 'ภารกิจ<span class="nw">ต่างประเทศ</span>', title: 'ภารกิจต่างประเทศ', kw: 'overseas mission callsign' },
-    { slug: 'logbook', code: 'WEB11', icon: icons.book, short: 'Log Book', title: 'Air Transport Log Book', kw: 'logbook สมุดบันทึก ชั่วโมงบิน' }
+    { slug: 'logbook', code: 'WEB11', icon: icons.book, short: 'Log Book', title: 'Air Transport Log Book', kw: 'logbook สมุดบันทึก ชั่วโมงบิน' },
+    { slug: 'aar', code: 'WEB15', icon: icons.review, short: 'AAR', title: 'AAR · After Action Review', kw: 'aar after action review ทบทวน หลังปฏิบัติ' }
   ]},
   { id: 'pax', title: 'ผังที่นั่งผู้โดยสาร', items: TYPES.map(t => ({
     slug: t.toLowerCase() + '_seatplan_passenger', code: PAX_CODE[t], icon: icons.seatmap, badge: t, short: t, title: t + ' ผู้โดยสาร', kw: 'seat plan passenger รายชื่อ boarding pass'
